@@ -1,0 +1,118 @@
+/* Custom Icons */
+td.icon {
+    text-align: center;
+}
+
+td.icon i {
+    font-size: 25px;
+    text-shadow: 1px 1px #aaa;
+}
+
+td.icon .severe {
+    color: red;
+}
+
+td.icon .elevated {
+    color: orangered;
+}
+
+td.icon .low {
+    color: #006400;
+}
+
+/* Row Coloring */
+/* #tableListTravelers tr td {
+    background-color: #c1ffc3 !important;
+}*/
+#tableListTravelers tr.range-elevated td,
+#transit_table tr.range-elevated td,
+#valid_table tr.range-elevated td {
+    background-color: #fff599 !important;
+    font-weight: bold;
+}
+
+#tableListTravelers tr.range-severe td,
+#transit_table tr.range-severe td,
+#valid_table tr.range-severe td {
+    background-color: #a7ffaa !important;
+    font-weight: bold;
+}
+
+#transit_table tr.range-severe td {
+    opacity: 0.3;
+}
+
+#tableListTravelers tr.range-low td,
+#transit_table tr.range-low td,
+#valid_table tr.range-low td {
+    background-color: #edf7ff !important;
+    font-weight: bold;
+}
+
+#tableListTravelers tr.range-confirm td,
+#transit_table tr.range-confirm td,
+#valid_table tr.range-confirm td {
+    background-color: #ff8981 !important;
+    font-weight: bold;
+}
+
+#transit_table tr.range-confirm td {
+    opacity: 0.3;
+}
+
+#tableListTravelers tr.range-back td {
+    background-color: lightyellow !important;
+    font-weight: bold;
+}
+
+#transit_table td:first-child,
+#transit_table th:first-child {
+    display: none
+}
+
+#back_table td:first-child,
+#back_table th:first-child {
+    display: none
+}
+
+#tableListTravelers .table td,
+#transit_table .table td,
+#valid_table .table td {
+    border-top: 1px solid #fff;
+}
+
+#tableListTravelers td.range-severe,
+td.range-elevated {
+    font-weight: bold;
+}
+
+#transit_table td.range-severe,
+td.range-elevated {
+    font-weight: bold;
+}
+
+#valid_table td.range-severe,
+td.range-elevated {
+    font-weight: bold;
+}
+
+.icon-inline i {
+    font-size: 18px;
+    margin-left: 5px;
+}
+
+.icon-inline i.icon-alert-circle {
+    color: #ef392c;
+}
+
+.icon-inline i.icon-alert {
+    color: #ff9c1a;
+}
+
+.icon-inline i.icon-check {
+    color: #5fff5e;
+}
+
+td.highlight {
+    background-color: brown !important;
+}

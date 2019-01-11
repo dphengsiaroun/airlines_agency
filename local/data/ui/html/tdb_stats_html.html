@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Tdb_stats HTML</title>
+    <link rel="shortcut icon" href="/en-US/static/@49EF3B520FFE07C6A8F330363B8EB3012B2FC6262D4ABDBCBEE3B2CBD688F4D9.4/img/favicon.ico" />
+    <link rel="stylesheet" type="text/css" href="{{SPLUNKWEB_URL_PREFIX}}/static/app/airlines_agency/style.css" />
+    <link rel="stylesheet" type="text/css" href="{{SPLUNKWEB_URL_PREFIX}}/static/app/airlines_agency/table_decorations.css" />
+    <link rel="stylesheet" type="text/css" href="{{SPLUNKWEB_URL_PREFIX}}/static/build/css/bootstrap-enterprise.css" />
+    <link rel="stylesheet" type="text/css" href="{{SPLUNKWEB_URL_PREFIX}}/static/build/css/splunkjs-dashboard.css" />
+
+
+    <meta name="referrer" content="never" />
+    <meta name="referrer" content="no-referrer" />
+
+    <script>
+        window._splunk_metrics_events = {
+            push: function () {},
+            active: false,
+        }
+    </script>
+</head>
+
+<body class="simplexml preload locale-en" data-splunk-version="7.2.1" data-splunk-product="enterprise">
+    <!--
+BEGIN LAYOUT
+This section contains the layout for the dashboard. Splunk uses proprietary
+styles in <div> tags, similar to Bootstrap's grid system.
+-->
+    <header>
+        <a aria-label="Screen reader users, click here to skip the navigation bar" class="navSkip" href="#navSkip"
+            tabIndex="1">Skip Navigation &gt;</a>
+        <div class="header splunk-header">
+            <div id="placeholder-splunk-bar">
+                <a href="{{SPLUNKWEB_URL_PREFIX}}/app/launcher/home" class="brand" title="splunk &gt; listen to your data">splunk<strong>&gt;</strong></a>
+            </div>
+            <div id="placeholder-app-bar"></div>
+        </div>
+        <a id="navSkip"></a>
+    </header>
+    <div class="dashboard-body container-fluid main-section-body" data-role="main">
+        <div class="dashboard-header clearfix">
+            <h2>Liste des voyageurs en attente de traitement</h2>
+        </div>
+
+        <div id="row1" class="dashboard-row dashboard-row1">
+            <div id="panel1" class="dashboard-cell" style="width: 100%;">
+                <div style="display: inline-block; margin-bottom: 5px;" id="validate_btn">
+                    <button class="btn btn-primary">Validate</button>
+                </div>
+                <div style="display: inline-block; margin-bottom: 5px;" id="cancel_btn">
+                    <button class="btn btn-primary">Cancel</button>
+                </div>
+                <div style="display: inline-block; margin-bottom: 5px;" id="delete_btn">
+                    <button class="btn btn-primary">Delete</button>
+                </div>
+                <div class="dashboard-panel clearfix">
+
+                    <div class="panel-element-row">
+                        <div id="transit_table" class="dashboard-element table" style="width: 100%">
+                            <div class="panel-body"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2>Situation global des voyageurs</h2>
+        <div style="display: inline-block; margin-bottom: 5px;" id="valid_kv_delete_btn">
+            <button class="btn btn-primary">Delete</button>
+        </div>
+        <div id="row2" class="dashboard-row dashboard-row2">
+            <div id="panel1" class="dashboard-cell" style="width: 100%;">
+
+                <div class="dashboard-panel clearfix">
+
+                    <div class="panel-element-row">
+                        <div id="validate_table" class="dashboard-element table" style="width: 100%">
+                            <div class="panel-body"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="panel2" class="dashboard-cell" style="width: 100%;">
+                <div class="dashboard-panel clearfix">
+                    <div class="panel-element-row">
+                        <div id="element2" class="dashboard-element chart" style="width: 100%">
+                            <div class="panel-body"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--
+END LAYOUT
+-->
+
+    <script src="{{SPLUNKWEB_URL_PREFIX}}/config?autoload=1" crossorigin="use-credentials"></script>
+    <script src="{{SPLUNKWEB_URL_PREFIX}}/static/js/i18n.js"></script>
+    <script src="{{SPLUNKWEB_URL_PREFIX}}/i18ncatalog?autoload=1"></script>
+    <script src="{{SPLUNKWEB_URL_PREFIX}}/static/build/simplexml/index.js"></script>
+    <script type="text/javascript">
+        // <![CDATA[
+        // <![CDATA[
+        //
+        // LIBRARY REQUIREMENTS
+        //
+        // In the require function, we include the necessary libraries and modules for
+        // the HTML dashboard. Then, we pass variable names for these libraries and
+        // modules as function parameters, in order.
+        //
+        // When you add libraries or modules, remember to retain this mapping order
+        // between the library or module and its function parameter. You can do this by
+        // adding to the end of these lists, as shown in the commented examples below.
+
+        require([
+                "splunkjs/mvc",
+                "splunkjs/mvc/utils",
+                "splunkjs/mvc/tokenutils",
+                "underscore",
+                "jquery",
+                "splunkjs/mvc/simplexml",
+                "splunkjs/mvc/layoutview",
+                "splunkjs/mvc/simplexml/dashboardview",
+                "splunkjs/mvc/simplexml/dashboard/panelref",
+                "splunkjs/mvc/simplexml/element/chart",
+                "splunkjs/mvc/simplexml/element/event",
+                "splunkjs/mvc/simplexml/element/html",
+                "splunkjs/mvc/simplexml/element/list",
+                "splunkjs/mvc/simplexml/element/map",
+                "splunkjs/mvc/simplexml/element/single",
+                "splunkjs/mvc/simplexml/element/table",
+                "splunkjs/mvc/simplexml/element/visualization",
+                "splunkjs/mvc/simpleform/formutils",
+                "splunkjs/mvc/simplexml/eventhandler",
+                "splunkjs/mvc/simplexml/searcheventhandler",
+                "splunkjs/mvc/simpleform/input/dropdown",
+                "splunkjs/mvc/simpleform/input/radiogroup",
+                "splunkjs/mvc/simpleform/input/linklist",
+                "splunkjs/mvc/simpleform/input/multiselect",
+                "splunkjs/mvc/simpleform/input/checkboxgroup",
+                "splunkjs/mvc/simpleform/input/text",
+                "splunkjs/mvc/simpleform/input/timerange",
+                "splunkjs/mvc/simpleform/input/submit",
+                "splunkjs/mvc/searchmanager",
+                "splunkjs/mvc/savedsearchmanager",
+                "splunkjs/mvc/postprocessmanager",
+                "splunkjs/mvc/simplexml/urltokenmodel"
+                // Add comma-separated libraries and modules manually here, for example:
+                // ..."splunkjs/mvc/simplexml/urltokenmodel",
+                // "splunkjs/mvc/tokenforwarder"
+            ],
+            function (
+                mvc,
+                utils,
+                TokenUtils,
+                _,
+                $,
+                DashboardController,
+                LayoutView,
+                Dashboard,
+                PanelRef,
+                ChartElement,
+                EventElement,
+                HtmlElement,
+                ListElement,
+                MapElement,
+                SingleElement,
+                TableElement,
+                VisualizationElement,
+                FormUtils,
+                EventHandler,
+                SearchEventHandler,
+                DropdownInput,
+                RadioGroupInput,
+                LinkListInput,
+                MultiSelectInput,
+                CheckboxGroupInput,
+                TextInput,
+                TimeRangeInput,
+                SubmitButton,
+                SearchManager,
+                SavedSearchManager,
+                PostProcessManager,
+                UrlTokenModel
+
+                // Add comma-separated parameter names here, for example:
+                // ...UrlTokenModel,
+                // TokenForwarder
+            ) {
+
+                var pageLoading = true;
+
+
+                //
+                // TOKENS
+                //
+
+                // Create token namespaces
+                var urlTokenModel = new UrlTokenModel();
+                mvc.Components.registerInstance('url', urlTokenModel);
+                var defaultTokenModel = mvc.Components.getInstance('default', {
+                    create: true
+                });
+                var submittedTokenModel = mvc.Components.getInstance('submitted', {
+                    create: true
+                });
+
+                urlTokenModel.on('url:navigate', function () {
+                    defaultTokenModel.set(urlTokenModel.toJSON());
+                    if (!_.isEmpty(urlTokenModel.toJSON()) && !_.all(urlTokenModel.toJSON(), _.isUndefined)) {
+                        submitTokens();
+                    } else {
+                        submittedTokenModel.clear();
+                    }
+                });
+
+                // Initialize tokens
+                defaultTokenModel.set(urlTokenModel.toJSON());
+
+                function submitTokens() {
+                    // Copy the contents of the defaultTokenModel to the submittedTokenModel and urlTokenModel
+                    FormUtils.submitForm({
+                        replaceState: pageLoading
+                    });
+                }
+
+                function setToken(name, value) {
+                    defaultTokenModel.set(name, value);
+                    submittedTokenModel.set(name, value);
+                }
+
+                function unsetToken(name) {
+                    defaultTokenModel.unset(name);
+                    submittedTokenModel.unset(name);
+                }
+
+
+
+                //
+                // SEARCH MANAGERS
+                //
+
+                var search1 = new SearchManager({
+                    "id": "search1",
+                    "search": "| inputlookup transit_kv_lookup | rename status as transit_status date_edit as date_transited user_edit as user_transited | lookup valid_kv_lookup id OUTPUT status as valid_status date_validation as date_validated user_validation as user_validated | eval status = if(transit_status == 1,if(valid_status == 2, \"2\",if(valid_status == 3, \"3\", \"1\")), \"0\") | eval date = if(isnotnull(date_validated), date_validated, if(isnotnull(date_transited), date_transited, \"\")) | eval user = if(isnotnull(user_validated), user_validated, if(isnotnull(user_transited), user_transited, \"\")) | eval keyID=_key | lookup StatusCSV code as status OUTPUT description | rename description as status | table id keyID lastname firstname email airlines status date user | sort + id",
+                    "cancelOnUnload": true,
+                    "latest_time": "now",
+                    "status_buckets": 0,
+                    "sample_ratio": null,
+                    "earliest_time": "-24h@h",
+                    "app": utils.getCurrentApp(),
+                    "auto_cancel": 90,
+                    "preview": true,
+                    "tokenDependencies": {},
+                    "runWhenTimeIsUndefined": false
+                }, {
+                    tokens: true,
+                    tokenNamespace: "submitted"
+                });
+
+                var search2 = new SearchManager({
+                    "id": "search2",
+                    "search": "| inputlookup TravelersCSV | lookup transit_kv_lookup id as num OUTPUT status as transit_status  | lookup valid_kv_lookup id as num OUTPUT status as valid_status | eval status = if(transit_status == 1,if(valid_status == 2, \"2\",if(valid_status == 3, \"3\", \"1\")), \"0\") | lookup StatusCSV code as status OUTPUT description | lookup AirlinesCSV IATA_CODE as codeAir OUTPUT AIRLINE | rename num as id AIRLINE as airlines description as status | stats count by status",
+                    "cancelOnUnload": true,
+                    "latest_time": "now",
+                    "status_buckets": 0,
+                    "sample_ratio": null,
+                    "earliest_time": "-24h@h",
+                    "app": utils.getCurrentApp(),
+                    "auto_cancel": 90,
+                    "preview": true,
+                    "tokenDependencies": {},
+                    "runWhenTimeIsUndefined": false
+                }, {
+                    tokens: true,
+                    tokenNamespace: "submitted"
+                });
+
+                var search3 = new SearchManager({
+                    "id": "search3",
+                    "search": "|inputlookup valid_kv_lookup | eval keyID=_key | lookup StatusCSV code as status OUTPUT description | rename description as status |sort + id",
+                    "cancelOnUnload": true,
+                    "latest_time": "now",
+                    "status_buckets": 0,
+                    "sample_ratio": null,
+                    "earliest_time": "-24h@h",
+                    "app": utils.getCurrentApp(),
+                    "auto_cancel": 90,
+                    "preview": true,
+                    "tokenDependencies": {},
+                    "runWhenTimeIsUndefined": false
+                }, {
+                    tokens: true,
+                    tokenNamespace: "submitted"
+                });
+
+
+                //
+                // SPLUNK LAYOUT
+                //
+
+                $('header').remove();
+                new LayoutView({
+                        "hideAppBar": false,
+                        "hideChrome": false,
+                        "hideSplunkBar": false
+                    })
+                    .render()
+                    .getContainerElement()
+                    .appendChild($('.dashboard-body')[0]);
+
+                //
+                // DASHBOARD EDITOR
+                //
+
+                new Dashboard({
+                    id: 'dashboard',
+                    el: $('.dashboard-body'),
+                    showTitle: true,
+                    editable: true
+                }, {
+                    tokens: true
+                }).render();
+
+
+                //
+                // VIEWS: VISUALIZATION ELEMENTS
+                //
+
+                var transit_table = new TableElement({
+                    "id": "transit_table",
+                    "drilldown": "cell",
+                    "managerid": "search1",
+                    "fields": "select id firstname lastname email airlines status date user",
+                    "el": $('#transit_table')
+                }, {
+                    tokens: true,
+                    tokenNamespace: "submitted"
+                }).render();
+
+                var validate_table = new TableElement({
+                    "id": "validate_table",
+                    "drilldown": "none",
+                    "managerid": "search3",
+                    "fields": "select id firstname lastname email airlines status date_validation user_validation",
+                    "el": $('#validate_table')
+                }, {
+                    tokens: true,
+                    tokenNamespace: "submitted"
+                }).render();
+
+                var element2 = new ChartElement({
+                    "id": "element2",
+                    "charting.chart": "pie",
+                    "charting.drilldown": "none",
+                    "resizable": true,
+                    "managerid": "search2",
+                    "el": $('#element2')
+                }, {
+                    tokens: true,
+                    tokenNamespace: "submitted"
+                }).render();
+
+
+                // Initialize time tokens to default
+                if (!defaultTokenModel.has('earliest') && !defaultTokenModel.has('latest')) {
+                    defaultTokenModel.set({
+                        earliest: '0',
+                        latest: ''
+                    });
+                }
+
+                submitTokens();
+
+                //
+                // DASHBOARD CONTROL ELEMENTS
+                //
+
+                function pushArray(arr1, arr2) {
+                    if (arr1 && arr2 && Array.isArray(arr1)) {
+                        arr1.push.apply(arr1, Array.isArray(arr2) ? arr2 : [arr2]);
+                    }
+                }
+
+                var items = [];
+                var rowContentSelected = {};
+                var obj_key = [];
+                var keyid_array = [];
+
+                transit_table.on('click', function (e) {
+                    e.preventDefault();
+                    // console.log('e', e);
+                    if (e.field === 'id') {
+                        var id = e.data['row.id'];
+                        var email = e.data['row.email'];
+                        var firstname = e.data['row.firstname'];
+                        var lastname = e.data['row.lastname'];
+                        var airlines = e.data['row.airlines'];
+                        var status = e.data['row.status'];
+                        var keyid = e.data['row.keyID'];
+                        console.log('keyid', keyid);
+
+                        rowContentSelected = {
+                            'id': id,
+                            'email': email,
+                            'firstname': firstname,
+                            'lastname': lastname,
+                            'airlines': airlines,
+                            'status': status
+                        }
+
+                        if (items.length == 0) {
+                            items.push(rowContentSelected);
+                            console.log('items', items)
+                            pushArray(obj_key, id);
+                            pushArray(keyid_array, keyid);
+                            myfunction(obj_key);
+                        } else {
+                            if (_.contains(obj_key, id)) {
+                                for (i = items.length - 1; i >= 0; i--) {
+                                    if (items[i].id === id) {
+                                        items.splice(i, 1);
+                                        console.log('items2', items)
+                                        obj_key.splice(obj_key.indexOf(id), 1);
+                                        keyid_array.splice(keyid_array.indexOf(keyid), 1);
+                                        myfunction(obj_key);
+                                    }
+                                }
+                            } else {
+                                items.push(rowContentSelected);
+                                console.log('items3', items)
+                                pushArray(obj_key, id);
+                                pushArray(keyid_array, keyid);
+                                myfunction(obj_key);
+                            }
+                        }
+                    } else {
+                        e.preventDefault();
+                    }
+                });
+
+                validate_table.on('click', function (e) {
+                    e.preventDefault();
+                    // console.log('e', e);
+                    if (e.field === 'id') {
+                        var id = e.data['row.id'];
+                        var email = e.data['row.email'];
+                        var firstname = e.data['row.firstname'];
+                        var lastname = e.data['row.lastname'];
+                        var airlines = e.data['row.airlines'];
+                        var keyid = e.data['row.keyID'];
+                        console.log('keyid', keyid);
+
+                        rowContentSelected = {
+                            'id': id,
+                            'email': email,
+                            'firstname': firstname,
+                            'lastname': lastname,
+                            'airlines': airlines,
+                        }
+
+                        if (items.length == 0) {
+                            items.push(rowContentSelected);
+                            console.log('items', items)
+                            pushArray(obj_key, id);
+                            pushArray(keyid_array, keyid);
+                            myfunction(obj_key);
+                        } else {
+                            if (_.contains(obj_key, id)) {
+                                for (i = items.length - 1; i >= 0; i--) {
+                                    if (items[i].id === id) {
+                                        items.splice(i, 1);
+                                        console.log('items2', items)
+                                        obj_key.splice(obj_key.indexOf(id), 1);
+                                        keyid_array.splice(keyid_array.indexOf(keyid), 1);
+                                        myfunction(obj_key);
+                                    }
+                                }
+                            } else {
+                                items.push(rowContentSelected);
+                                console.log('items3', items)
+                                pushArray(obj_key, id);
+                                pushArray(keyid_array, keyid);
+                                myfunction(obj_key);
+                            }
+                        }
+                    } else {
+                        e.preventDefault();
+                    }
+                });
+
+                $('#delete_btn').on('click', function () {
+                    delete_keyid();
+                    search2.startSearch();
+                });
+
+                // Call this function when the Delete Record button is clicked
+                function delete_keyid() {
+                    if (keyid_array.length > 0) {
+                        console.log('keyid_array2', keyid_array);
+                        for (i = 0; i < keyid_array.length; i++) {
+                            service.del(
+                                "storage/collections/data/transitcollection/" +
+                                encodeURIComponent(keyid_array[i])
+                            );
+                        }
+                        search1.startSearch();
+                        return false;
+                    };
+                };
+
+                $('#valid_kv_delete_btn').on('click', function () {
+                    valid_kv_delete_keyid();
+                    search2.startSearch();
+                });
+
+                function valid_kv_delete_keyid() {
+                    if (keyid_array.length > 0) {
+                        console.log('keyid_array2', keyid_array);
+                        for (i = 0; i < keyid_array.length; i++) {
+                            service.del(
+                                "storage/collections/data/validatecollection/" +
+                                encodeURIComponent(keyid_array[i])
+                            );
+                        }
+                        search3.startSearch();
+                        return false;
+                    };
+                };
+
+                var service = mvc.createService({
+                    owner: "nobody"
+                });
+
+                function getCurrentUserSplunk() {
+                    var tokens = mvc.Components.getInstance("default");
+                    var current = Splunk.util.getConfigValue("USERNAME");
+                    var currentUser = tokens.set("currentuser", current).attributes.currentuser;
+                    return currentUser;
+                }
+
+                $('#validate_btn').on('click', function () {
+                    console.log('validate_btn');
+                    var current_date = new Date();
+                    var dd = current_date.getDate();
+                    var mm = current_date.getMonth() + 1; //January is 0!
+                    var yyyy = current_date.getFullYear();
+                    current_date = dd + '-' + mm + '-' + yyyy;
+                    var current_user = getCurrentUserSplunk();
+
+                    for (i = 0; i < items.length; i++) {
+                        var record = {
+                            "firstname": items[i].firstname,
+                            "lastname": items[i].lastname,
+                            "email": items[i].email,
+                            "id": items[i].id,
+                            "airlines": items[i].airlines,
+                            "date_validation": current_date,
+                            "user_validation": current_user,
+                            "status": "2"
+                        };
+                        console.log('record', record);
+                        service.request(
+                            "storage/collections/data/validatecollection/",
+                            "POST",
+                            null,
+                            null,
+                            JSON.stringify(record), {
+                                "Content-Type": "application/json"
+                            },
+                            null
+                        );
+
+                    }
+                    items = [];
+                    obj_key = [];
+                    // delete_keyid();
+                    keyid_array = [];
+                    myfunction(obj_key);
+
+                    search1.startSearch();
+                    search2.startSearch();
+                    search3.startSearch();
+                });
+
+                //
+                // CANCEL BUTTON
+                //
+
+                $('#cancel_btn').on('click', function () {
+                    // delete_keyid();
+                    console.log('cancel_btn');
+                    var current_date = new Date();
+                    var dd = current_date.getDate();
+                    var mm = current_date.getMonth() + 1; //January is 0!
+                    var yyyy = current_date.getFullYear();
+                    current_date = dd + '-' + mm + '-' + yyyy;
+                    var current_user = getCurrentUserSplunk();
+
+                    for (i = 0; i < items.length; i++) {
+                        var record = {
+                            "firstname": items[i].firstname,
+                            "lastname": items[i].lastname,
+                            "email": items[i].email,
+                            "id": items[i].id,
+                            "airlines": items[i].airlines,
+                            "date_validation": current_date,
+                            "user_validation": current_user,
+                            "status": "3"
+                        };
+                        console.log('record', record);
+                        service.request(
+                            "storage/collections/data/validatecollection/",
+                            "POST",
+                            null,
+                            null,
+                            JSON.stringify(record), {
+                                "Content-Type": "application/json"
+                            },
+                            null
+                        );
+
+                    }
+                    items = [];
+                    obj_key = [];
+                    // delete_keyid();
+                    keyid_array = [];
+                    myfunction(obj_key);
+                    search1.startSearch();
+                    search2.startSearch();
+                    search3.startSearch();
+                });
+
+                //
+                // DASHBOARD COLORATION
+                //
+
+                function myfunction(a) {
+                    var CustomRangeRenderer = TableView.BaseCellRenderer.extend({
+                        canRender: function (cell) {
+                            return _(['id']).contains(cell.field);
+                        },
+                        render: function ($td, cell) {
+                            var value = String(cell.value);
+                            if (_.contains(a, value)) {
+                                $td.addClass('range-cell').addClass('range-elevated');
+                            }
+                            $td.text(value).addClass('text');
+                        }
+                    });
+                    mvc.Components.get('content_table').getVisualization(function (tableView) {
+                        tableView.on('rendered', function () {
+                            // Apply class of the cells to the parent row in order to color the whole row
+                            tableView.$el.find('td.range-cell').each(function () {
+                                $(this).parents('tr').addClass(this.className);
+                            });
+                        });
+                        // Add custom cell renderer, the table will re-render automatically.
+                        tableView.addCellRenderer(new CustomRangeRenderer());
+                    });
+                };
+
+
+                //
+                // DASHBOARD READY
+                //
+
+                DashboardController.ready();
+                pageLoading = false;
+
+            }
+        );
+        // ]]>
+    </script>
+    <script src="{{SPLUNKWEB_URL_PREFIX}}/static/app/airlines_agency/table_row_highlighting.js" type="text/javascript"></script>
+</body>
+
+</html>

@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Tdb_list_travelers HTML</title>
+    <link rel="shortcut icon" href="/en-US/static/@49EF3B520FFE07C6A8F330363B8EB3012B2FC6262D4ABDBCBEE3B2CBD688F4D9.4/img/favicon.ico" />
+    <link rel="stylesheet" type="text/css" href="{{SPLUNKWEB_URL_PREFIX}}/static/app/airlines_agency/style.css" />
+    <link rel="stylesheet" type="text/css" href="{{SPLUNKWEB_URL_PREFIX}}/static/app/airlines_agency/table_decorations.css" />
+    <link rel="stylesheet" type="text/css" href="{{SPLUNKWEB_URL_PREFIX}}/static/build/css/bootstrap-enterprise.css" />
+    <link rel="stylesheet" type="text/css" href="{{SPLUNKWEB_URL_PREFIX}}/static/build/css/splunkjs-dashboard.css" />
+
+
+    <meta name="referrer" content="never" />
+    <meta name="referrer" content="no-referrer" />
+
+    <script>
+        window._splunk_metrics_events = {
+            push: function () {},
+            active: false,
+        }
+    </script>
+</head>
+
+<body class="simplexml preload locale-en" data-splunk-version="7.2.1" data-splunk-product="enterprise">
+    <!--
+BEGIN LAYOUT
+This section contains the layout for the dashboard. Splunk uses proprietary
+styles in <div> tags, similar to Bootstrap's grid system.
+-->
+    <header>
+        <a aria-label="Screen reader users, click here to skip the navigation bar" class="navSkip" href="#navSkip"
+            tabIndex="1">Skip Navigation &gt;</a>
+        <div class="header splunk-header">
+            <div id="placeholder-splunk-bar">
+                <a href="{{SPLUNKWEB_URL_PREFIX}}/app/launcher/home" class="brand" title="splunk &gt; listen to your data">splunk<strong>&gt;</strong></a>
+            </div>
+            <div id="placeholder-app-bar"></div>
+        </div>
+        <a id="navSkip"></a>
+    </header>
+    <div class="dashboard-body container-fluid main-section-body" data-role="main">
+        <div class="dashboard-header clearfix">
+            <h2>Liste global des voyageurs à traités</h2>
+        </div>
+
+        <div style="display:inline-block; margin-bottom: 5px;" id="btnSendForChecking">
+            <button class="btn btn-primary">Send for checking</button>
+        </div>
+
+        <div id="row1" class="dashboard-row dashboard-row1">
+            <div id="panel1" class="dashboard-cell" style="width: 100%;">
+                <div class="dashboard-panel clearfix">
+
+                    <div class="panel-element-row">
+                        <div id="tableListTravelers" class="dashboard-element table" style="width: 100%">
+                            <div class="panel-body"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--
+END LAYOUT
+-->
+
+    <script src="{{SPLUNKWEB_URL_PREFIX}}/config?autoload=1" crossorigin="use-credentials"></script>
+    <script src="{{SPLUNKWEB_URL_PREFIX}}/static/js/i18n.js"></script>
+    <script src="{{SPLUNKWEB_URL_PREFIX}}/i18ncatalog?autoload=1"></script>
+    <script src="{{SPLUNKWEB_URL_PREFIX}}/static/build/simplexml/index.js"></script>
+    <script type="text/javascript">
+        // <![CDATA[
+        // <![CDATA[
+        //
+        // LIBRARY REQUIREMENTS
+        //
+        // In the require function, we include the necessary libraries and modules for
+        // the HTML dashboard. Then, we pass variable names for these libraries and
+        // modules as function parameters, in order.
+        //
+        // When you add libraries or modules, remember to retain this mapping order
+        // between the library or module and its function parameter. You can do this by
+        // adding to the end of these lists, as shown in the commented examples below.
+
+        require([
+                "splunkjs/mvc",
+                "splunkjs/mvc/utils",
+                "splunkjs/mvc/tokenutils",
+                "underscore",
+                "jquery",
+                "splunkjs/mvc/simplexml",
+                "splunkjs/mvc/layoutview",
+                "splunkjs/mvc/simplexml/dashboardview",
+                "splunkjs/mvc/simplexml/dashboard/panelref",
+                "splunkjs/mvc/simplexml/element/chart",
+                "splunkjs/mvc/simplexml/element/event",
+                "splunkjs/mvc/simplexml/element/html",
+                "splunkjs/mvc/simplexml/element/list",
+                "splunkjs/mvc/simplexml/element/map",
+                "splunkjs/mvc/simplexml/element/single",
+                "splunkjs/mvc/simplexml/element/table",
+                "splunkjs/mvc/simplexml/element/visualization",
+                "splunkjs/mvc/simpleform/formutils",
+                "splunkjs/mvc/simplexml/eventhandler",
+                "splunkjs/mvc/simplexml/searcheventhandler",
+                "splunkjs/mvc/simpleform/input/dropdown",
+                "splunkjs/mvc/simpleform/input/radiogroup",
+                "splunkjs/mvc/simpleform/input/linklist",
+                "splunkjs/mvc/simpleform/input/multiselect",
+                "splunkjs/mvc/simpleform/input/checkboxgroup",
+                "splunkjs/mvc/simpleform/input/text",
+                "splunkjs/mvc/simpleform/input/timerange",
+                "splunkjs/mvc/simpleform/input/submit",
+                "splunkjs/mvc/searchmanager",
+                "splunkjs/mvc/savedsearchmanager",
+                "splunkjs/mvc/postprocessmanager",
+                "splunkjs/mvc/tableview",
+                "splunkjs/mvc/simplexml/urltokenmodel"
+                // Add comma-separated libraries and modules manually here, for example:
+                // ..."splunkjs/mvc/simplexml/urltokenmodel",
+                // "splunkjs/mvc/tokenforwarder"
+            ],
+            function (
+                mvc,
+                utils,
+                TokenUtils,
+                _,
+                $,
+                DashboardController,
+                LayoutView,
+                Dashboard,
+                PanelRef,
+                ChartElement,
+                EventElement,
+                HtmlElement,
+                ListElement,
+                MapElement,
+                SingleElement,
+                TableElement,
+                VisualizationElement,
+                FormUtils,
+                EventHandler,
+                SearchEventHandler,
+                DropdownInput,
+                RadioGroupInput,
+                LinkListInput,
+                MultiSelectInput,
+                CheckboxGroupInput,
+                TextInput,
+                TimeRangeInput,
+                SubmitButton,
+                SearchManager,
+                SavedSearchManager,
+                PostProcessManager,
+                TableView,
+                UrlTokenModel
+
+                // Add comma-separated parameter names here, for example:
+                // ...UrlTokenModel,
+                // TokenForwarder
+            ) {
+
+                var pageLoading = true;
+
+
+                //
+                // TOKENS
+                //
+
+                // Create token namespaces
+                var urlTokenModel = new UrlTokenModel();
+                mvc.Components.registerInstance('url', urlTokenModel);
+                var defaultTokenModel = mvc.Components.getInstance('default', {
+                    create: true
+                });
+                var submittedTokenModel = mvc.Components.getInstance('submitted', {
+                    create: true
+                });
+
+                urlTokenModel.on('url:navigate', function () {
+                    defaultTokenModel.set(urlTokenModel.toJSON());
+                    if (!_.isEmpty(urlTokenModel.toJSON()) && !_.all(urlTokenModel.toJSON(), _.isUndefined)) {
+                        submitTokens();
+                    } else {
+                        submittedTokenModel.clear();
+                    }
+                });
+
+                // Initialize tokens
+                defaultTokenModel.set(urlTokenModel.toJSON());
+
+                function submitTokens() {
+                    // Copy the contents of the defaultTokenModel to the submittedTokenModel and urlTokenModel
+                    FormUtils.submitForm({
+                        replaceState: pageLoading
+                    });
+                }
+
+                function setToken(name, value) {
+                    defaultTokenModel.set(name, value);
+                    submittedTokenModel.set(name, value);
+                }
+
+                function unsetToken(name) {
+                    defaultTokenModel.unset(name);
+                    submittedTokenModel.unset(name);
+                }
+
+
+
+                //
+                // SEARCH MANAGERS
+                //
+
+                var search1 = new SearchManager({
+                    "id": "search1",
+                    "search": "| inputlookup TravelersCSV | lookup transit_kv_lookup id as num OUTPUT status as transit_status date_edit as date_transited user_edit as user_transited  | lookup valid_kv_lookup id as num OUTPUT status as valid_status date_validation as date_validated user_validation as user_validated | eval status = if(transit_status == 1,if(valid_status == 2, \"2\",if(valid_status == 3, \"3\", \"1\")), \"0\") | eval date = if(isnotnull(date_validated), date_validated, if(isnotnull(date_transited), date_transited, \"\")) | eval user = if(isnotnull(user_validated), user_validated, if(isnotnull(user_transited), user_transited, \"\")) | lookup StatusCSV code as status OUTPUT description | lookup AirlinesCSV IATA_CODE as codeAir OUTPUT AIRLINE | rename num as id AIRLINE as airlines description as status | table id lastname firstname email airlines status date user",
+                    "cancelOnUnload": true,
+                    "latest_time": "now",
+                    "status_buckets": 0,
+                    "sample_ratio": null,
+                    "earliest_time": "-24h@h",
+                    "app": utils.getCurrentApp(),
+                    "auto_cancel": 90,
+                    "preview": true,
+                    "tokenDependencies": {},
+                    "runWhenTimeIsUndefined": false
+                }, {
+                    tokens: true,
+                    tokenNamespace: "submitted"
+                });
+
+
+                //
+                // SPLUNK LAYOUT
+                //
+
+                $('header').remove();
+                new LayoutView({
+                        "hideAppBar": false,
+                        "hideChrome": false,
+                        "hideSplunkBar": false
+                    })
+                    .render()
+                    .getContainerElement()
+                    .appendChild($('.dashboard-body')[0]);
+
+                //
+                // DASHBOARD EDITOR
+                //
+
+                new Dashboard({
+                    id: 'dashboard',
+                    el: $('.dashboard-body'),
+                    showTitle: true,
+                    editable: true
+                }, {
+                    tokens: true
+                }).render();
+
+
+                //
+                // VIEWS: VISUALIZATION ELEMENTS
+                //
+
+                var tableListTravelers = new TableElement({
+                    "id": "tableListTravelers",
+                    "drilldown": "cell",
+                    "refresh.display": "progressbar",
+                    "fields": "id lastname firstname email airlines status date user",
+                    "managerid": "search1",
+                    "el": $('#tableListTravelers')
+                }, {
+                    tokens: true,
+                    tokenNamespace: "submitted"
+                }).render();
+
+                function pushArray(array1, array2) {
+                    if (array1 && array2 && Array.isArray(array1)) {
+                        array1.push.apply(array1, Array.isArray(array2) ? array2 : [array2]);
+                    }
+                }
+
+
+                var items = []; // contient tous les éléments sélectioner
+                var rowContentSelected = {}; // contient toutes les variables récupérées
+                var obj_key = []; // contient 
+
+                // ici fnc onclick table pour sélectionnner une ligne du tableau
+                tableListTravelers.on('click', function (e) {
+                    e.preventDefault();
+                    // console.log('e', e);
+                    if (e.field === 'id') {
+                        // On stock nos valeurs dans une variable
+                        var id = e.data['row.id'];
+                        var email = e.data['row.email'];
+                        var lastname = e.data['row.lastname'];
+                        var firstname = e.data['row.firstname'];
+                        var airlines = e.data['row.airlines'];
+                        var status = e.data['row.status'];
+
+                        // On défini l'objet et on stock nos valeurs dans l'objet
+                        rowContentSelected = {
+                            'id': id,
+                            'email': email,
+                            'firstname': firstname,
+                            'lastname': lastname,
+                            'airlines': airlines,
+                            'status': status
+                        }
+                        // Si l'objet n'a aucun élément on lui ajoute
+                        if (items.length == 0) {
+                            items.push(rowContentSelected);
+                            console.log('items1', items)
+                            pushArray(obj_key, id);
+                            console.log('obj_key', obj_key, 'id', id);
+                            myfunction(obj_key);
+                        } else {
+                            // Lors du clique si l'id sélectionner est déjà dans l'objet on le retire
+                            if (_.contains(obj_key, id)) {
+                                for (i = items.length - 1; i >= 0; i--) {
+                                    if (items[i].id === id) {
+                                        items.splice(i, 1);
+                                        console.log('items2', items)
+                                        obj_key.splice(obj_key.indexOf(id), 1);
+                                        console.log('obj_key', obj_key);
+                                        myfunction(obj_key);
+                                    }
+                                }
+                                // Sinon on l'ajoute à l'objet
+                            } else {
+                                items.push(rowContentSelected);
+                                console.log('items3', items);
+                                pushArray(obj_key, id);
+                                console.log('obj_key', obj_key, 'id', id);
+                                myfunction(obj_key);
+                            }
+                        }
+                    } else {
+                        e.preventDefault();
+                    }
+                });
+
+                // Initialize time tokens to default
+                if (!defaultTokenModel.has('earliest') && !defaultTokenModel.has('latest')) {
+                    defaultTokenModel.set({
+                        earliest: '0',
+                        latest: ''
+                    });
+                }
+
+                submitTokens();
+
+                var service = mvc.createService({
+                    owner: "nobody"
+                });
+
+                function getCurrentUserSplunk() {
+                    var tokens = mvc.Components.getInstance("default");
+                    var current = Splunk.util.getConfigValue("USERNAME");
+                    var currentUser = tokens.set("currentuser", current).attributes.currentuser;
+                    return currentUser;
+                }
+
+                $('#btnSendForChecking').on('click', function () {
+                    console.log(items);
+                    var current_date = new Date();
+                    var dd = current_date.getDate();
+                    var mm = current_date.getMonth() + 1; //January is 0!
+                    var yyyy = current_date.getFullYear();
+                    current_date = dd + '-' + mm + '-' + yyyy;
+                    var current_user = getCurrentUserSplunk();
+
+                    for (i = 0; i < items.length; i++) {
+                        console.log(items);
+
+                        var record = {
+                            "firstname": items[i].firstname,
+                            "lastname": items[i].lastname,
+                            "email": items[i].email,
+                            "id": items[i].id,
+                            "airlines": items[i].airlines,
+                            "date_edit": current_date,
+                            "user_edit": current_user,
+                            "status": "1"
+                        };
+                        console.log('items', record);
+
+                        service.request(
+                            "storage/collections/data/transitcollection/",
+                            "POST",
+                            null,
+                            null,
+                            JSON.stringify(record), {
+                                "Content-Type": "application/json"
+                            },
+                            null
+                        );
+                    }
+                    items = [];
+                    obj_key = [];
+                    myfunction(obj_key);
+                    search1.startSearch();
+                });
+
+                //
+                // DASHBOARD COLORATION
+                //
+
+                function myfunction(a) {
+                    console.log('color cell start');
+                    var CustomRangeRenderer = TableView.BaseCellRenderer.extend({
+                        canRender: function (cellData) {
+                            console.log('canRender', cellData);
+                            // return cellData.index === 0;
+                        },
+                        render: function ($td, cellData) {
+                            value = cellData.value;
+                            console.log('render', value);
+                            $td.on('click', function () {
+                                $('td').addClass('red');
+                            })
+                            $td.text(value);
+                        }
+                    });
+
+                    mvc.Components.get('tableListTravelers').getVisualization(function (tableView) {
+                        console.log('rendered start', tableView);
+                        tableView.on('rendered', function () {
+                            console.log('rendered 1');
+                            // Apply class of the cells to the parent row in order to color the whole row
+                            setTimeout(function () {
+                                console.log('rendered 2');
+                                tableView.$el.find('td').each(function () {
+                                    console.log('Hello');
+                                    $(this).parents('tr').addClass('toto');
+                                });
+                            }, 100);
+                            console.log('rendered 3');
+                        });
+                        console.log('rendered end');
+                        // Add custom cell renderer, the table will re-render automatically.
+                        tableView.addCellRenderer(new CustomRangeRenderer());
+                    });
+                    console.log('color cell end');
+                };
+
+
+                //
+                // DASHBOARD READY
+                //
+                DashboardController.ready();
+                pageLoading = false;
+            }
+        );
+        // ]]>
+    </script>
+    <script src="{{SPLUNKWEB_URL_PREFIX}}/static/app/airlines_agency/table_row_highlighting.js" type="text/javascript"></script>
+</body>
+
+</html>

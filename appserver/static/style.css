@@ -1,0 +1,9 @@
+#transit_table td:first-child, 
+#transit_table th:first-child,
+#validate_table td:first-child, 
+#validate_table th:first-child {
+    display: none !important;
+}
+.active {
+    background-color: lightblue !important;
+}

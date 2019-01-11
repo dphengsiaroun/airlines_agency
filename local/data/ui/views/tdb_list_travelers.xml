@@ -1,0 +1,16 @@
+<dashboard>
+  <label>Tdb_list_travelers</label>
+  <row>
+    <panel>
+      <table>
+        <search>
+          <query>| inputlookup TravelersCSV | lookup AirlinesCSV IATA_CODE as codeAir OUTPUT AIRLINE</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+</dashboard>
